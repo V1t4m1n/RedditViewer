@@ -20,11 +20,8 @@ public class RequestTask extends AsyncTask<String, String, String> {
     private StringBuilder sb;
     private InputStream inputStream;
 
-    TextView textView;
-
-    public RequestTask(String url, TextView textView) {
+    public RequestTask(String url) {
         this.BASE_URL = url;
-        this.textView = textView;
     }
 
     @Override
@@ -65,6 +62,5 @@ public class RequestTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        textView.setText(s);
     }
 }
