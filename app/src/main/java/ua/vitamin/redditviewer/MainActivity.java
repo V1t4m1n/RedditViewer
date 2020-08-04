@@ -1,19 +1,12 @@
 package ua.vitamin.redditviewer;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +44,12 @@ public class MainActivity extends AppCompatActivity implements Callable {
 
     @Override
     public void setAdapter(List<Post> posts) {
-        if (posts != null && posts.size() > 0)
+        if (posts != null && posts.size() > 0) {
+            Log.d("RESULTS_SIZE", String.valueOf(posts.size()));
             listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts));
-        else
+        } else {
             listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
+        }
     }
 
     private List<Post> onGenerateFakeData(int count) {
@@ -64,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
             Post item = new Post();
             item.setAuthor("Author " + i);
             item.setCommentsCount("Comments count " + i);
-            item.setDateAdded("Added data " + i);
+            item.setDateAdded("Date Added " + i);
             item.setThumbnail("https://refactoring.guru/images/content-public/logos/logo-new.png");
             posts.add(item);
         }

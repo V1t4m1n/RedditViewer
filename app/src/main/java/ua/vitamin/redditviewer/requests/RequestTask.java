@@ -14,11 +14,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.dto.Post;
+
+import static android.provider.Settings.System.DATE_FORMAT;
 
 public class RequestTask extends AsyncTask<String, String, String> {
 
@@ -38,7 +46,6 @@ public class RequestTask extends AsyncTask<String, String, String> {
 
     @Override
     protected String doInBackground(String... uri) {
-
         try {
             URL url = new URL(BASE_URL);
 
@@ -93,12 +100,14 @@ public class RequestTask extends AsyncTask<String, String, String> {
 
         for (int i = 0; i < jsonArray.length(); i++) {
             Post post = new Post();
+
             JSONObject topic = jsonArray.getJSONObject(i).getJSONObject("data");
 
-            post.setAuthor(topic.getString("author"));;
+            post.setAuthor("Author: " + topic.getString("author"));
             post.setThumbnail(topic.getString("thumbnail"));
-            post.setDateAdded("created_utc");
-            post.setCommentsCount("num_comments");
+            
+            post.setDateAdded("Date added: " + topic.getString("created_utc"));
+            post.setCommentsCount("Comments count: " + topic.getString("num_comments"));
 
             postList.add(post);
             Log.d("ONE_POST", post.getAuthor());
