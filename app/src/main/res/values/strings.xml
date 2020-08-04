@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RedditViewer</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -2,7 +2,7 @@ package ua.vitamin.redditviewer.dto;
 
 public class Post {
 
-    String thumbnail;
+    String thumbnail = "https://refactoring.guru/images/content-public/logos/logo-new.png";
     String author;
     String dateAdded;
     String commentsCount;
@@ -12,7 +12,8 @@ public class Post {
     }
 
     public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
+        if (thumbnail == null) this.thumbnail = "https://refactoring.guru/images/content-public/logos/logo-new.png";
+        else this.thumbnail = thumbnail;
     }
 
     public String getAuthor() {

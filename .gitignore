@@ -10,6 +10,6 @@
 .DS_Store
 /build
 /captures
-settings.gradle
+.settings.gradle
 .externalNativeBuild
 .cxx
