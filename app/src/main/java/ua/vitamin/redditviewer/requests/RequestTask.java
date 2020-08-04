@@ -14,7 +14,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -105,13 +107,28 @@ public class RequestTask extends AsyncTask<String, String, String> {
 
             post.setAuthor("Author: " + topic.getString("author"));
             post.setThumbnail(topic.getString("thumbnail"));
-            
-            post.setDateAdded("Date added: " + topic.getString("created_utc"));
+            Date a = new Date();
+            int time = 0;
+
+            try {
+               a = onCalculatingTime(topic.getString("created_utc"));
+               time = LocalTime.now().getHour() - a.getHours();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            post.setDateAdded("Date added: " + time);
             post.setCommentsCount("Comments count: " + topic.getString("num_comments"));
 
             postList.add(post);
             Log.d("ONE_POST", post.getAuthor());
         }
         return postList;
+    }
+
+    private Date onCalculatingTime(String utc) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date myDate = simpleDateFormat.parse(utc);
+        return myDate;
     }
 }

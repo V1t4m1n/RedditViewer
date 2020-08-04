@@ -1,7 +1,9 @@
 package ua.vitamin.redditviewer;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import java.util.List;
 
 import ua.vitamin.redditviewer.adapters.PostsRecyclerViewAdapter;
 import ua.vitamin.redditviewer.callback.Callable;
+import ua.vitamin.redditviewer.databinding.ActivityMainBinding;
 import ua.vitamin.redditviewer.dto.Post;
 import ua.vitamin.redditviewer.requests.RequestTask;
 
@@ -21,11 +24,17 @@ public class MainActivity extends AppCompatActivity implements Callable {
     private RecyclerView listPostsRecyclerView;
     private PostsRecyclerViewAdapter postsRecyclerViewAdapter;
     private final String BASE_URL = "https://www.reddit.com/top.json";
+    private ActivityMainBinding binding;
+    private View content;
+    private List<Post> savedList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        content = binding.getRoot();
+        setContentView(content);
 
         postsRecyclerViewAdapter = new PostsRecyclerViewAdapter();
         listPostsRecyclerView = findViewById(R.id.listPostsRecyclerView);
@@ -43,10 +52,39 @@ public class MainActivity extends AppCompatActivity implements Callable {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        for (Post item: savedList) {
+            outState.putString("AUTHOR", item.getAuthor());
+            outState.putString("TIME", item.getDateAdded());
+            outState.putString("COMMENTS", item.getCommentsCount());
+            outState.putString("THUMBNAIL", item.getThumbnail());
+        }
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        while (savedInstanceState != null) {
+            Post item = new Post();
+
+            item.setAuthor(savedInstanceState.getString("AUTHOR"));
+            item.setAuthor(savedInstanceState.getString("TIME"));
+            item.setAuthor(savedInstanceState.getString("COMMENTS"));
+            item.setAuthor(savedInstanceState.getString("THUMBNAIL"));
+
+            savedList.add(item);
+        }
+    }
+
+    @Override
     public void setAdapter(List<Post> posts) {
         if (posts != null && posts.size() > 0) {
             Log.d("RESULTS_SIZE", String.valueOf(posts.size()));
             listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts));
+            savedList = posts;
         } else {
             listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
         }

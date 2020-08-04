@@ -1,7 +1,10 @@
 package ua.vitamin.redditviewer.adapters;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +19,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import ua.vitamin.redditviewer.MainActivity;
 import ua.vitamin.redditviewer.R;
+import ua.vitamin.redditviewer.allerts.FullScreenImageActivity;
 import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.dto.Post;
 
@@ -69,6 +74,8 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
         TextView dateAddedTextView;
         TextView commentsCountTextView;
 
+        ImageView fullScreenImageView;
+
         public PostsViewHolder(final View itemView) {
             super(itemView);
 
@@ -77,16 +84,20 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
             dateAddedTextView = itemView.findViewById(R.id.dateAddedTextView);
             commentsCountTextView = itemView.findViewById(R.id.commentsCountTextView);
 
+            fullScreenImageView = itemView.findViewById(R.id.fullScreenImageView);
+
             thumbnailImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onOpenThumbnail();
+                    //onOpenThumbnail(itemView.getContext());
                 }
             });
         }
 
-        private void onOpenThumbnail() {
-            Toast.makeText(context, "Click " + getAdapterPosition(), Toast.LENGTH_LONG).show();
+        private void onOpenThumbnail(Context con) {
+            Intent intent = new Intent(itemView.getContext(), FullScreenImageActivity.class);
+            intent.putExtra("url_image", postsList.get(getAdapterPosition()).getThumbnail());
+            con.startActivity(intent);
         }
     }
 }
