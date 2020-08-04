@@ -1,37 +1,38 @@
 package ua.vitamin.redditviewer.adapters;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import ua.vitamin.redditviewer.MainActivity;
 import ua.vitamin.redditviewer.R;
-import ua.vitamin.redditviewer.allerts.FullScreenImageActivity;
-import ua.vitamin.redditviewer.callback.Callable;
+import ua.vitamin.redditviewer.allerts.FullScreenImageDialog;
 import ua.vitamin.redditviewer.dto.Post;
 
 public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecyclerViewAdapter.PostsViewHolder> {
 
     private List <Post> postsList;
     private Context context;
+    private FragmentManager manager;
 
     public PostsRecyclerViewAdapter(List<Post> postsList, Context context) {
         this.postsList = postsList;
+        this.context = context;
+    }
+    public PostsRecyclerViewAdapter(List<Post> postsList, FragmentManager manager, Context context) {
+        this.postsList = postsList;
+        this.manager = manager;
         this.context = context;
     }
     public PostsRecyclerViewAdapter(List<Post> postsList) {
@@ -89,15 +90,15 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
             thumbnailImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //onOpenThumbnail(itemView.getContext());
+
+                    onOpenThumbnail(postsList.get(getAdapterPosition()).getThumbnail());
                 }
             });
         }
 
-        private void onOpenThumbnail(Context con) {
-            Intent intent = new Intent(itemView.getContext(), FullScreenImageActivity.class);
-            intent.putExtra("url_image", postsList.get(getAdapterPosition()).getThumbnail());
-            con.startActivity(intent);
+        private void onOpenThumbnail(String imageURL) {
+            FullScreenImageDialog dialog = new FullScreenImageDialog(imageURL, context);
+            dialog.show(manager, "FULL_SCREEN_DIALOG");
         }
     }
 }

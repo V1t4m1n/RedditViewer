@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements Callable {
         listPostsRecyclerView = findViewById(R.id.listPostsRecyclerView);
         listPostsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         listPostsRecyclerView.setAdapter(postsRecyclerViewAdapter);
-
     }
 
     @Override
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
         requestTask.execute();
     }
 
-    @Override
+    /*@Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         for (Post item: savedList) {
@@ -60,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements Callable {
             outState.putString("COMMENTS", item.getCommentsCount());
             outState.putString("THUMBNAIL", item.getThumbnail());
         }
-
     }
 
     @Override
@@ -77,13 +75,13 @@ public class MainActivity extends AppCompatActivity implements Callable {
 
             savedList.add(item);
         }
-    }
+    }*/
 
     @Override
     public void setAdapter(List<Post> posts) {
         if (posts != null && posts.size() > 0) {
             Log.d("RESULTS_SIZE", String.valueOf(posts.size()));
-            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts));
+            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts, getSupportFragmentManager(), getApplicationContext()));
             savedList = posts;
         } else {
             listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
@@ -103,6 +101,4 @@ public class MainActivity extends AppCompatActivity implements Callable {
         }
         return posts;
     }
-
-
 }
