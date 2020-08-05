@@ -1,8 +1,8 @@
 package ua.vitamin.redditviewer.requests;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,18 +17,14 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.dto.Post;
-
-import static android.provider.Settings.System.DATE_FORMAT;
 
 public class RequestTask extends AsyncTask<String, String, String> {
 
@@ -99,6 +95,9 @@ public class RequestTask extends AsyncTask<String, String, String> {
         JSONObject data = response.getJSONObject("data");
         JSONArray jsonArray = data.getJSONArray("children");
         List<Post> postList = new ArrayList<>();
+        Date past = null;
+        Date now = null;
+        long timeAgo = 0;
 
         for (int i = 0; i < jsonArray.length(); i++) {
             Post post = new Post();
@@ -107,28 +106,25 @@ public class RequestTask extends AsyncTask<String, String, String> {
 
             post.setAuthor("Author: " + topic.getString("author"));
             post.setThumbnail(topic.getString("thumbnail"));
-            Date a = new Date();
-            int time = 0;
-
             try {
-               a = onCalculatingTime(topic.getString("created_utc"));
-               time = LocalTime.now().getHour() - a.getHours();
-            } catch (ParseException e) {
+               /* SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                past = new Date(String.valueOf(format.parse(topic.getString("created_utc"))));
+                now = new Date();*/
+
+                //timeAgo = now.getTime() - past.getTime();
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            post.setDateAdded("Date added: " + time);
+            post.setDateAdded(/*TimeUnit.MILLISECONDS.toHours(now.getTime() - past.getTime())*/10 + " hours ago");
+
             post.setCommentsCount("Comments count: " + topic.getString("num_comments"));
 
             postList.add(post);
             Log.d("ONE_POST", post.getAuthor());
         }
         return postList;
-    }
-
-    private Date onCalculatingTime(String utc) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date myDate = simpleDateFormat.parse(utc);
-        return myDate;
     }
 }

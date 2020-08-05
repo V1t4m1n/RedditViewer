@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,6 +50,8 @@ public class FullScreenImageDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                onSaveImage();
+                Toast.makeText(v.getContext(), "Image saved", Toast.LENGTH_SHORT).show();
+                getActivity().getSupportFragmentManager().beginTransaction().remove(FullScreenImageDialog.this).commit();
             }
         });
         return root;
@@ -59,6 +62,6 @@ public class FullScreenImageDialog extends DialogFragment {
         Bitmap bitmap = drawable.getBitmap();
 
         MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap,
-                "" + System.currentTimeMillis() + ".jpg Card Image", "barcodeNumber" + ".jpg Card Image");
+                "RedditPost" + System.currentTimeMillis() + ".jpg Card Image", "" + System.currentTimeMillis() + ".jpg Card Image");
     }
 }

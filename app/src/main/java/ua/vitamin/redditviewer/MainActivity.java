@@ -1,7 +1,6 @@
 package ua.vitamin.redditviewer;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 
@@ -32,6 +31,9 @@ public class MainActivity extends AppCompatActivity implements Callable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null)
+            Log.d("BAUTHOR",savedInstanceState.getString("AUTHOR"));
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         content = binding.getRoot();
         setContentView(content);
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
         requestTask.execute();
     }
 
-    /*@Override
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         for (Post item: savedList) {
@@ -61,20 +63,12 @@ public class MainActivity extends AppCompatActivity implements Callable {
         }
     }
 
-    @Override
+/*    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        while (savedInstanceState != null) {
-            Post item = new Post();
 
-            item.setAuthor(savedInstanceState.getString("AUTHOR"));
-            item.setAuthor(savedInstanceState.getString("TIME"));
-            item.setAuthor(savedInstanceState.getString("COMMENTS"));
-            item.setAuthor(savedInstanceState.getString("THUMBNAIL"));
 
-            savedList.add(item);
-        }
     }*/
 
     @Override

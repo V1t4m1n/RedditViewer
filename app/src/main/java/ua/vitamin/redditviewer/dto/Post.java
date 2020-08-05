@@ -12,8 +12,8 @@ public class Post {
     }
 
     public void setThumbnail(String thumbnail) {
-        if (thumbnail == null) this.thumbnail = "https://refactoring.guru/images/content-public/logos/logo-new.png";
-        else this.thumbnail = thumbnail;
+        if (!(thumbnail == null))
+            this.thumbnail = thumbnail;
     }
 
     public String getAuthor() {
