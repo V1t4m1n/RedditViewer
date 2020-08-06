@@ -26,13 +26,37 @@ public class MainActivity extends AppCompatActivity implements Callable {
     private ActivityMainBinding binding;
     private View content;
     private List<Post> savedList;
+    private Boolean nr = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null)
-            Log.d("BAUTHOR",savedInstanceState.getString("AUTHOR"));
+        if (savedInstanceState != null) {
+
+            ArrayList<String>authorList;
+            ArrayList<String>timeList;
+            ArrayList<String>commentsList;
+            ArrayList<String>thumbnailList;
+
+            nr = savedInstanceState.getBoolean("nr");
+            authorList = savedInstanceState.getStringArrayList("authorList");
+            timeList = savedInstanceState.getStringArrayList("timeList");
+            commentsList = savedInstanceState.getStringArrayList("commentsList");
+            thumbnailList = savedInstanceState.getStringArrayList("thumbnailList");
+
+            savedList = new ArrayList<>();
+
+            for (int index = 0; index < 25; index++) {
+                Post item = new Post();
+
+                item.setAuthor(authorList.get(index));
+                item.setDateAdded(timeList.get(index));
+                item.setCommentsCount(commentsList.get(index));
+                item.setThumbnail(thumbnailList.get(index));
+                savedList.add(item);
+            }
+        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         content = binding.getRoot();
@@ -47,29 +71,44 @@ public class MainActivity extends AppCompatActivity implements Callable {
     @Override
     protected void onResume() {
         super.onResume();
-
-        requestTask = new RequestTask(BASE_URL, this);
-        requestTask.execute();
+        if (nr) {
+            requestTask = new RequestTask(BASE_URL, this);
+            requestTask.execute();
+        } else {
+            if (savedList != null && savedList.size() > 0) {
+                Log.d("RESULTS_SIZE", String.valueOf(savedList.size()));
+                listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(savedList, getSupportFragmentManager(), getApplicationContext()));
+            } else {
+                listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
+            }
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+
+        ArrayList<String>authorList = new ArrayList<>();
+        ArrayList<String>timeList = new ArrayList<>();
+        ArrayList<String>commentsList = new ArrayList<>();
+        ArrayList<String>thumbnailList = new ArrayList<>();
+        boolean nr = false;
+
         for (Post item: savedList) {
-            outState.putString("AUTHOR", item.getAuthor());
-            outState.putString("TIME", item.getDateAdded());
-            outState.putString("COMMENTS", item.getCommentsCount());
-            outState.putString("THUMBNAIL", item.getThumbnail());
+            authorList.add(item.getAuthor());
+            timeList.add(item.getDateAdded());
+            commentsList.add(item.getCommentsCount());
+            thumbnailList.add(item.getThumbnail());
         }
+
+        outState.putStringArrayList("authorList",authorList);
+        outState.putStringArrayList("timeList",timeList);
+        outState.putStringArrayList("commentsList",commentsList);
+        outState.putStringArrayList("thumbnailList",thumbnailList);
+        outState.putBoolean("nr",nr);
+
+        super.onSaveInstanceState(outState);
     }
 
-/*    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-
-
-    }*/
 
     @Override
     public void setAdapter(List<Post> posts) {
