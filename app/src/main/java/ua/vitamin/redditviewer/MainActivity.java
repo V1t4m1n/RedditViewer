@@ -14,7 +14,7 @@ import java.util.List;
 import ua.vitamin.redditviewer.adapters.PostsRecyclerViewAdapter;
 import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.databinding.ActivityMainBinding;
-import ua.vitamin.redditviewer.dto.Post;
+import ua.vitamin.redditviewer.utils.dto.Post;
 import ua.vitamin.redditviewer.requests.RequestTask;
 
 public class MainActivity extends AppCompatActivity implements Callable {
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
     private ActivityMainBinding binding;
     private View content;
     private List<Post> savedList;
-    private Boolean nr = true;
+    private boolean nr = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

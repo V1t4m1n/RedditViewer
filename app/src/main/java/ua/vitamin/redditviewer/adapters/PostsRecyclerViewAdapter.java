@@ -1,7 +1,6 @@
 package ua.vitamin.redditviewer.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import java.util.List;
 
 import ua.vitamin.redditviewer.R;
 import ua.vitamin.redditviewer.allerts.FullScreenImageDialog;
-import ua.vitamin.redditviewer.dto.Post;
+import ua.vitamin.redditviewer.utils.dto.Post;
 
 public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecyclerViewAdapter.PostsViewHolder> {
 
@@ -65,7 +64,7 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
 
         holder.authorTextView.setText(postsList.get(position).getAuthor());
         holder.commentsCountTextView.setText(postsList.get(position).getCommentsCount());
-        holder.dateAddedTextView.setText(postsList.get(position).getDateAdded());
+        holder.dateAddedTextView.setText(""+postsList.get(position).getDateAdded());
     }
 
     class PostsViewHolder extends RecyclerView.ViewHolder {

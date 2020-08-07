@@ -1,4 +1,4 @@
-package ua.vitamin.redditviewer.dto;
+package ua.vitamin.redditviewer.utils.dto;
 
 public class Post {
 

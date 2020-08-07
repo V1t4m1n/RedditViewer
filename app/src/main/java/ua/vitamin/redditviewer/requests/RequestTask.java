@@ -1,6 +1,5 @@
 package ua.vitamin.redditviewer.requests;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -14,17 +13,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 import ua.vitamin.redditviewer.callback.Callable;
-import ua.vitamin.redditviewer.dto.Post;
+import ua.vitamin.redditviewer.utils.dto.Post;
+import ua.vitamin.redditviewer.utils.dto.TimeFormatter;
 
 public class RequestTask extends AsyncTask<String, String, String> {
 
@@ -95,9 +92,8 @@ public class RequestTask extends AsyncTask<String, String, String> {
         JSONObject data = response.getJSONObject("data");
         JSONArray jsonArray = data.getJSONArray("children");
         List<Post> postList = new ArrayList<>();
-        Date past = null;
-        Date now = null;
-        long timeAgo = 0;
+
+        String format = "yyyy/MM/dd HH:mm:ss";
 
         for (int i = 0; i < jsonArray.length(); i++) {
             Post post = new Post();
@@ -106,19 +102,15 @@ public class RequestTask extends AsyncTask<String, String, String> {
 
             post.setAuthor("Author: " + topic.getString("author"));
             post.setThumbnail(topic.getString("thumbnail"));
-            try {
-               /* SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                format.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                past = new Date(String.valueOf(format.parse(topic.getString("created_utc"))));
-                now = new Date();*/
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            Date localDate = new Date(topic.getLong("created_utc"));
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            Date gmtTime = new Date(sdf.format(localDate));
 
-                //timeAgo = now.getTime() - past.getTime();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            post.setDateAdded(/*TimeUnit.MILLISECONDS.toHours(now.getTime() - past.getTime())*/10 + " hours ago");
+            Date fromGmt = new Date(gmtTime.getTime() + TimeZone.getDefault().getOffset(localDate.getTime()));
+            String time = TimeFormatter.getTimeAgo(fromGmt.getTime());
+            post.setDateAdded(time);
 
             post.setCommentsCount("Comments count: " + topic.getString("num_comments"));
 
