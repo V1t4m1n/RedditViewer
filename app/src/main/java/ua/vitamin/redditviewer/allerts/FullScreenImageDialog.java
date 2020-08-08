@@ -61,9 +61,9 @@ public class FullScreenImageDialog extends DialogFragment {
             bitmap = drawable.getBitmap();
             MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap,
                     "RedditPost" + System.currentTimeMillis() + ".jpg Card Image", "" + System.currentTimeMillis() + ".jpg Card Image");
-            Toast.makeText(getContext(), "Image saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Image saved", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
-            Toast.makeText(getContext(), "Error! This is not a picture. Save canceled.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Error! This is not a picture. Save canceled.", Toast.LENGTH_LONG).show();
         }
 
     }

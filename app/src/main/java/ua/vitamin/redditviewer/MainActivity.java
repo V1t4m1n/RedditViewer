@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
         setContentView(content);
 
         progressDialog = onCreateDialog();
+        progressDialog.show();
 
         postsRecyclerViewAdapter = new PostsRecyclerViewAdapter();
         listPostsRecyclerView = findViewById(R.id.listPostsRecyclerView);
@@ -79,7 +80,17 @@ public class MainActivity extends AppCompatActivity implements Callable {
         if (nr) {
             requestTask = new RequestTask(BASE_URL, this);
             requestTask.execute();
-            progressDialog.dismiss();
+
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(3800);
+                        progressDialog.dismiss();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         } else {
             if (savedList != null && savedList.size() > 0) {
                 Log.d("RESULTS_SIZE", String.valueOf(savedList.size()));
@@ -115,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements Callable {
 
         super.onSaveInstanceState(outState);
     }
-
 
     @Override
     public void setAdapter(List<Post> posts) {
