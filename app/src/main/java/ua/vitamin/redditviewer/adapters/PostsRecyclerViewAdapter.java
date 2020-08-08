@@ -23,19 +23,13 @@ import ua.vitamin.redditviewer.utils.dto.Post;
 public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecyclerViewAdapter.PostsViewHolder> {
 
     private List <Post> postsList;
-    private Context context;
-    private FragmentManager manager;
     private Callable callable;
 
     public PostsRecyclerViewAdapter(List<Post> postsList, Callable callable) {
         this.postsList = postsList;
         this.callable = callable;
     }
-    public PostsRecyclerViewAdapter(List<Post> postsList, FragmentManager manager, Callable callable) {
-        this.postsList = postsList;
-        this.manager = manager;
-        this.callable = callable;
-    }
+
     public PostsRecyclerViewAdapter(List<Post> postsList) {
         this.postsList = postsList;
     }

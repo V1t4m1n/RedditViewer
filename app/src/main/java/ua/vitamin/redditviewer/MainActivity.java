@@ -4,8 +4,6 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,8 +16,8 @@ import ua.vitamin.redditviewer.adapters.PostsRecyclerViewAdapter;
 import ua.vitamin.redditviewer.allerts.FullScreenImageDialog;
 import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.databinding.ActivityMainBinding;
-import ua.vitamin.redditviewer.utils.dto.Post;
 import ua.vitamin.redditviewer.requests.RequestTask;
+import ua.vitamin.redditviewer.utils.dto.Post;
 
 public class MainActivity extends AppCompatActivity implements Callable {
 
@@ -36,8 +34,6 @@ public class MainActivity extends AppCompatActivity implements Callable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        progressDialog = ProgressDialog.show(this, "Allert", "Loading");
 
         if (savedInstanceState != null) {
 
@@ -69,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements Callable {
         content = binding.getRoot();
         setContentView(content);
 
+        progressDialog = onCreateDialog();
+
         postsRecyclerViewAdapter = new PostsRecyclerViewAdapter();
         listPostsRecyclerView = findViewById(R.id.listPostsRecyclerView);
         listPostsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -86,11 +84,10 @@ public class MainActivity extends AppCompatActivity implements Callable {
             if (savedList != null && savedList.size() > 0) {
                 Log.d("RESULTS_SIZE", String.valueOf(savedList.size()));
                 listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(savedList, this));
-                progressDialog.dismiss();
             } else {
                 listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
-                progressDialog.dismiss();
             }
+            progressDialog.dismiss();
         }
     }
 
@@ -124,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
     public void setAdapter(List<Post> posts) {
         if (posts != null && posts.size() > 0) {
             Log.d("RESULTS_SIZE", String.valueOf(posts.size()));
-            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts, getSupportFragmentManager(), this));
+            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts, this));
             savedList = posts;
         } else {
             listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
@@ -149,5 +146,12 @@ public class MainActivity extends AppCompatActivity implements Callable {
             posts.add(item);
         }
         return posts;
+    }
+    private ProgressDialog onCreateDialog() {
+        ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+        dialog.setMax(100);
+        dialog.setMessage("Loading...");
+        dialog.setTitle("Please wait");
+        return dialog;
     }
 }

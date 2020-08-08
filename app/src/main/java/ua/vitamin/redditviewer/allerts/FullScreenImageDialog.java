@@ -1,6 +1,5 @@
 package ua.vitamin.redditviewer.allerts;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -9,7 +8,6 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -48,8 +46,7 @@ public class FullScreenImageDialog extends DialogFragment {
             @RequiresApi(api = Build.VERSION_CODES.Q)
             @Override
             public void onClick(View v) {
-               onSaveImage();
-                Toast.makeText(v.getContext(), "Image saved", Toast.LENGTH_SHORT).show();
+                onSaveImage();
                 getActivity().getSupportFragmentManager().beginTransaction().remove(FullScreenImageDialog.this).commit();
             }
         });
@@ -57,11 +54,18 @@ public class FullScreenImageDialog extends DialogFragment {
     }
 
     private void onSaveImage() {
-        BitmapDrawable drawable = (BitmapDrawable) fullScreenImageView.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();
+        Bitmap bitmap;
+        BitmapDrawable drawable;
+        try {
+            drawable = (BitmapDrawable) fullScreenImageView.getDrawable();
+            bitmap = drawable.getBitmap();
+            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap,
+                    "RedditPost" + System.currentTimeMillis() + ".jpg Card Image", "" + System.currentTimeMillis() + ".jpg Card Image");
+            Toast.makeText(getContext(), "Image saved", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error! This is not a picture. Save canceled.", Toast.LENGTH_SHORT).show();
+        }
 
-        MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap,
-                "RedditPost" + System.currentTimeMillis() + ".jpg Card Image", "" + System.currentTimeMillis() + ".jpg Card Image");
     }
 
 
