@@ -17,6 +17,7 @@ import java.util.List;
 
 import ua.vitamin.redditviewer.R;
 import ua.vitamin.redditviewer.allerts.FullScreenImageDialog;
+import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.utils.dto.Post;
 
 public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecyclerViewAdapter.PostsViewHolder> {
@@ -24,15 +25,16 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
     private List <Post> postsList;
     private Context context;
     private FragmentManager manager;
+    private Callable callable;
 
-    public PostsRecyclerViewAdapter(List<Post> postsList, Context context) {
+    public PostsRecyclerViewAdapter(List<Post> postsList, Callable callable) {
         this.postsList = postsList;
-        this.context = context;
+        this.callable = callable;
     }
-    public PostsRecyclerViewAdapter(List<Post> postsList, FragmentManager manager, Context context) {
+    public PostsRecyclerViewAdapter(List<Post> postsList, FragmentManager manager, Callable callable) {
         this.postsList = postsList;
         this.manager = manager;
-        this.context = context;
+        this.callable = callable;
     }
     public PostsRecyclerViewAdapter(List<Post> postsList) {
         this.postsList = postsList;
@@ -90,14 +92,11 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
                 @Override
                 public void onClick(View v) {
 
-                    onOpenThumbnail(postsList.get(getAdapterPosition()).getThumbnail());
+                    callable.onOpenThumbnail(postsList.get(getAdapterPosition()).getThumbnail());
                 }
             });
         }
 
-        private void onOpenThumbnail(String imageURL) {
-            FullScreenImageDialog dialog = new FullScreenImageDialog(imageURL, context);
-            dialog.show(manager, "FULL_SCREEN_DIALOG");
-        }
+
     }
 }

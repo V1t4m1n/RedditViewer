@@ -1,8 +1,11 @@
 package ua.vitamin.redditviewer;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ua.vitamin.redditviewer.adapters.PostsRecyclerViewAdapter;
+import ua.vitamin.redditviewer.allerts.FullScreenImageDialog;
 import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.databinding.ActivityMainBinding;
 import ua.vitamin.redditviewer.utils.dto.Post;
@@ -27,10 +31,13 @@ public class MainActivity extends AppCompatActivity implements Callable {
     private View content;
     private List<Post> savedList;
     private boolean nr = true;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        progressDialog = ProgressDialog.show(this, "Allert", "Loading");
 
         if (savedInstanceState != null) {
 
@@ -74,12 +81,15 @@ public class MainActivity extends AppCompatActivity implements Callable {
         if (nr) {
             requestTask = new RequestTask(BASE_URL, this);
             requestTask.execute();
+            progressDialog.dismiss();
         } else {
             if (savedList != null && savedList.size() > 0) {
                 Log.d("RESULTS_SIZE", String.valueOf(savedList.size()));
-                listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(savedList, getSupportFragmentManager(), getApplicationContext()));
+                listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(savedList, this));
+                progressDialog.dismiss();
             } else {
                 listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
+                progressDialog.dismiss();
             }
         }
     }
@@ -114,11 +124,17 @@ public class MainActivity extends AppCompatActivity implements Callable {
     public void setAdapter(List<Post> posts) {
         if (posts != null && posts.size() > 0) {
             Log.d("RESULTS_SIZE", String.valueOf(posts.size()));
-            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts, getSupportFragmentManager(), getApplicationContext()));
+            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts, getSupportFragmentManager(), this));
             savedList = posts;
         } else {
             listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
         }
+    }
+
+    @Override
+    public void onOpenThumbnail(String imageURL) {
+        FullScreenImageDialog dialog = new FullScreenImageDialog(imageURL);
+        dialog.show(getSupportFragmentManager(), "FULL_SCREEN_DIALOG");
     }
 
     private List<Post> onGenerateFakeData(int count) {

@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,11 +28,9 @@ public class FullScreenImageDialog extends DialogFragment {
     private ImageView fullScreenImageView;
     private Button saveImageButton;
     private String url;
-    private Context context;
 
-    public FullScreenImageDialog(String url, Context context) {
+    public FullScreenImageDialog(String url) {
         this.url = url;
-        this.context = context;
     }
 
     @Nullable
@@ -61,7 +60,9 @@ public class FullScreenImageDialog extends DialogFragment {
         BitmapDrawable drawable = (BitmapDrawable) fullScreenImageView.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
 
-        MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap,
+        MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap,
                 "RedditPost" + System.currentTimeMillis() + ".jpg Card Image", "" + System.currentTimeMillis() + ".jpg Card Image");
     }
+
+
 }
