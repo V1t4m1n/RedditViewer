@@ -27,11 +27,17 @@ public class FullScreenImageDialog extends DialogFragment {
     private ImageView fullScreenImageView;
     private Button saveImageButton;
     private String url;
-    private Context context;
 
-    public FullScreenImageDialog(String url, Context context) {
+    public FullScreenImageDialog(String url) {
         this.url = url;
-        this.context = context;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        int width = ViewGroup.LayoutParams.MATCH_PARENT;
+        int height = ViewGroup.LayoutParams.MATCH_PARENT;
+        getDialog().getWindow().setLayout(width, height);
     }
 
     @Nullable
@@ -58,10 +64,17 @@ public class FullScreenImageDialog extends DialogFragment {
     }
 
     private void onSaveImage() {
-        BitmapDrawable drawable = (BitmapDrawable) fullScreenImageView.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();
+        BitmapDrawable drawable;
+        Bitmap bitmap;
+        try {
+            drawable = (BitmapDrawable) fullScreenImageView.getDrawable();
+            bitmap = drawable.getBitmap();
+            MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap,
+                    "RedditPost" + System.currentTimeMillis() + ".jpg Card Image", "" + System.currentTimeMillis() + ".jpg Card Image");
+            Toast.makeText(getContext(), "Image saved", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Error! This is not a picture. Save canceled.", Toast.LENGTH_LONG).show();
+        }
 
-        MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap,
-                "RedditPost" + System.currentTimeMillis() + ".jpg Card Image", "" + System.currentTimeMillis() + ".jpg Card Image");
     }
 }

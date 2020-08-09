@@ -1,4 +1,4 @@
-package ua.vitamin.redditviewer.utils.dto;
+package ua.vitamin.redditviewer.dto;
 
 public class Post {
 
@@ -6,6 +6,15 @@ public class Post {
     String author;
     String dateAdded;
     String commentsCount;
+    String image;
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public String getThumbnail() {
         return thumbnail;

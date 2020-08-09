@@ -1,4 +1,4 @@
-package ua.vitamin.redditviewer.utils.dto;
+package ua.vitamin.redditviewer.utils;
 
 public class TimeFormatter {
     private static final int SECOND_MILLIS = 1000;

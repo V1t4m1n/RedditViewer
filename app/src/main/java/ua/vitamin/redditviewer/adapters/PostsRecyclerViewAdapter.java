@@ -17,7 +17,7 @@ import java.util.List;
 
 import ua.vitamin.redditviewer.R;
 import ua.vitamin.redditviewer.allerts.FullScreenImageDialog;
-import ua.vitamin.redditviewer.utils.dto.Post;
+import ua.vitamin.redditviewer.dto.Post;
 
 public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecyclerViewAdapter.PostsViewHolder> {
 
@@ -60,6 +60,7 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
 
     @Override
     public void onBindViewHolder(@NonNull PostsViewHolder holder, int position) {
+
         Picasso.get().load(postsList.get(position).getThumbnail()).into(holder.thumbnailImageView);
 
         holder.authorTextView.setText(postsList.get(position).getAuthor());
@@ -89,14 +90,13 @@ public class PostsRecyclerViewAdapter extends RecyclerView.Adapter<PostsRecycler
             thumbnailImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    onOpenThumbnail(postsList.get(getAdapterPosition()).getThumbnail());
+                    openImage(postsList.get(getAdapterPosition()).getImage());
                 }
             });
         }
 
-        private void onOpenThumbnail(String imageURL) {
-            FullScreenImageDialog dialog = new FullScreenImageDialog(imageURL, context);
+        private void openImage(String imageURL) {
+            FullScreenImageDialog dialog = new FullScreenImageDialog(imageURL);
             dialog.show(manager, "FULL_SCREEN_DIALOG");
         }
     }

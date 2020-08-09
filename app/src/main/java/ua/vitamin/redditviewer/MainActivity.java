@@ -1,5 +1,7 @@
 package ua.vitamin.redditviewer;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,21 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ua.vitamin.redditviewer.adapters.PostsRecyclerViewAdapter;
-import ua.vitamin.redditviewer.callback.Callable;
 import ua.vitamin.redditviewer.databinding.ActivityMainBinding;
-import ua.vitamin.redditviewer.utils.dto.Post;
-import ua.vitamin.redditviewer.requests.RequestTask;
+import ua.vitamin.redditviewer.dto.Post;
+import ua.vitamin.redditviewer.requests.LoadPostsTask;
 
-public class MainActivity extends AppCompatActivity implements Callable {
+public class MainActivity extends AppCompatActivity implements LoadPostsTask.ResponseHandler {
 
-    private RequestTask requestTask;
+    private LoadPostsTask loadPostsTask;
     private RecyclerView listPostsRecyclerView;
     private PostsRecyclerViewAdapter postsRecyclerViewAdapter;
-    private final String BASE_URL = "https://www.reddit.com/top.json";
+    private final String redditURL = "https://www.reddit.com/top.json";
     private ActivityMainBinding binding;
     private View content;
     private List<Post> savedList;
-    private boolean nr = true;
+    private boolean isScreenInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
             ArrayList<String>commentsList;
             ArrayList<String>thumbnailList;
 
-            nr = savedInstanceState.getBoolean("nr");
+            isScreenInitialized = savedInstanceState.getBoolean("isScreenInitialized");
             authorList = savedInstanceState.getStringArrayList("authorList");
             timeList = savedInstanceState.getStringArrayList("timeList");
             commentsList = savedInstanceState.getStringArrayList("commentsList");
@@ -71,9 +72,9 @@ public class MainActivity extends AppCompatActivity implements Callable {
     @Override
     protected void onResume() {
         super.onResume();
-        if (nr) {
-            requestTask = new RequestTask(BASE_URL, this);
-            requestTask.execute();
+        if (!isScreenInitialized) {
+            loadPostsTask = new LoadPostsTask(redditURL, this);
+            loadPostsTask.execute();
         } else {
             if (savedList != null && savedList.size() > 0) {
                 Log.d("RESULTS_SIZE", String.valueOf(savedList.size()));
@@ -91,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements Callable {
         ArrayList<String>timeList = new ArrayList<>();
         ArrayList<String>commentsList = new ArrayList<>();
         ArrayList<String>thumbnailList = new ArrayList<>();
-        boolean nr = false;
 
         for (Post item: savedList) {
             authorList.add(item.getAuthor());
@@ -100,25 +100,13 @@ public class MainActivity extends AppCompatActivity implements Callable {
             thumbnailList.add(item.getThumbnail());
         }
 
+        outState.putBoolean("isScreenInitialized", isScreenInitialized);
         outState.putStringArrayList("authorList",authorList);
         outState.putStringArrayList("timeList",timeList);
         outState.putStringArrayList("commentsList",commentsList);
         outState.putStringArrayList("thumbnailList",thumbnailList);
-        outState.putBoolean("nr",nr);
 
         super.onSaveInstanceState(outState);
-    }
-
-
-    @Override
-    public void setAdapter(List<Post> posts) {
-        if (posts != null && posts.size() > 0) {
-            Log.d("RESULTS_SIZE", String.valueOf(posts.size()));
-            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts, getSupportFragmentManager(), getApplicationContext()));
-            savedList = posts;
-        } else {
-            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(onGenerateFakeData(1)));
-        }
     }
 
     private List<Post> onGenerateFakeData(int count) {
@@ -133,5 +121,32 @@ public class MainActivity extends AppCompatActivity implements Callable {
             posts.add(item);
         }
         return posts;
+    }
+
+    @Override
+    public void onResponse(List<Post> posts) {
+        if (posts != null && posts.size() > 0) {
+            Log.d("RESULTS_SIZE", String.valueOf(posts.size()));
+            listPostsRecyclerView.setAdapter(new PostsRecyclerViewAdapter(posts, getSupportFragmentManager(), getApplicationContext()));
+            savedList = posts;
+            isScreenInitialized = true;
+        } else {
+            onError(new Error("Error!"));
+        }
+    }
+
+    @Override
+    public void onError(Error error) {
+        new AlertDialog.Builder(getApplicationContext())
+                .setTitle("Error")
+                .setMessage(error.getMessage())
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }
