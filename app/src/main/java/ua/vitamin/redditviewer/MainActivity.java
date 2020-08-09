@@ -20,7 +20,8 @@ import ua.vitamin.redditviewer.requests.RequestTask;
 import ua.vitamin.redditviewer.utils.dto.Post;
 
 public class MainActivity extends AppCompatActivity implements Callable {
-
+    
+    private int COUNT_POSTS = 25;
     private RequestTask requestTask;
     private RecyclerView listPostsRecyclerView;
     private PostsRecyclerViewAdapter postsRecyclerViewAdapter;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
 
             savedList = new ArrayList<>();
 
-            for (int index = 0; index < 25; index++) {
+            for (int index = 0; index < COUNT_POSTS; index++) {
                 Post item = new Post();
 
                 item.setAuthor(authorList.get(index));
@@ -80,17 +81,7 @@ public class MainActivity extends AppCompatActivity implements Callable {
         if (nr) {
             requestTask = new RequestTask(BASE_URL, this);
             requestTask.execute();
-
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Thread.sleep(3800);
-                        progressDialog.dismiss();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+            progressDialog.dismiss();
         } else {
             if (savedList != null && savedList.size() > 0) {
                 Log.d("RESULTS_SIZE", String.valueOf(savedList.size()));
